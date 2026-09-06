@@ -1,7 +1,7 @@
 {
   "name": "7 ème compagnie — La Réunion",
   "short_name": "7ème compagnie",
-  "description": "165 endroits de La Réunion, réunis par Vincent.",
+  "description": "164 endroits de La Réunion, réunis par Vincent.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -4,7 +4,7 @@
    jamais aller voir si une plus recente existe. Le seul evenement qui purge
    l'ancienne copie, c'est un CHANGEMENT DE NOM DU CACHE — donc un changement
    de version. Tant que ce numero ne bouge pas, aucune mise a jour n'arrive. */
-const VERSION = '1.1.2';
+const VERSION = '1.2.0';
 const CACHE = '7eme-compagnie-v' + VERSION;
 const ASSETS = ['./', './index.html', './manifest.webmanifest',
                 './icon-192.png', './icon-512.png', './icon-maskable.png'];

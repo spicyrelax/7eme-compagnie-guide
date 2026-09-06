@@ -1,5 +1,13 @@
-const CACHE = '7eme-compagnie-v1';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+/* Numero de version : synchronise avec celui de index.html par publier.sh.
+   C'est LUI qui declenche les mises a jour. La strategie est "cache d'abord"
+   (indispensable au mode hors ligne) : la page enregistree est servie sans
+   jamais aller voir si une plus recente existe. Le seul evenement qui purge
+   l'ancienne copie, c'est un CHANGEMENT DE NOM DU CACHE — donc un changement
+   de version. Tant que ce numero ne bouge pas, aucune mise a jour n'arrive. */
+const VERSION = '1.1.0';
+const CACHE = '7eme-compagnie-v' + VERSION;
+const ASSETS = ['./', './index.html', './manifest.webmanifest',
+                './icon-192.png', './icon-512.png', './icon-maskable.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)).then(() => self.skipWaiting()));

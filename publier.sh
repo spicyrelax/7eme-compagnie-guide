@@ -57,6 +57,28 @@ for f in index.html sw.js; do
     [ -f "$f" ] || { rouge "⛔ $f introuvable"; exit 1; }
 done
 
+# --- Le depot local doit etre a jour avec origin AVANT de toucher a quoi
+# que ce soit. Sans ce garde-fou, un bump part sur une base perimee -- par
+# exemple parce qu'Eglantine a publie des lieux entre-temps directement via
+# l'API GitHub, sans jamais toucher a ce clone -- et le push echoue en
+# non-fast-forward (ou pire, ecraserait des lieux publies entre-temps si on
+# forcait). Incident du 16/09/2026 : 6 versions d'ecart jamais vues venir.
+BRANCHE="$(git rev-parse --abbrev-ref HEAD)"
+if ! git fetch origin "$BRANCHE" --quiet; then
+    rouge "⛔ Impossible de contacter origin (pas de réseau ?) — rien publié."
+    exit 1
+fi
+LOCAL="$(git rev-parse HEAD)"
+DISTANT="$(git rev-parse "origin/$BRANCHE")"
+if [ "$LOCAL" != "$DISTANT" ]; then
+    rouge "⛔ Ton dépôt local n'est pas à jour avec origin/$BRANCHE — rien publié."
+    rouge "   Eglantine (ou quelqu'un d'autre) a probablement publié entre-temps."
+    rouge "   Fais d'abord :  git pull origin $BRANCHE"
+    rouge "   (si ça diverge après un commit local raté : git reset --hard origin/$BRANCHE,"
+    rouge "    puis réapplique tes changements par-dessus)"
+    exit 1
+fi
+
 # --- Remplacement de la version dans les deux fichiers ---------------------
 gras "→ $ACTUELLE  ➜  $NOUVELLE"
 sed -i "s/^const VERSION = '[^']*';/const VERSION = '$NOUVELLE';/" index.html sw.js

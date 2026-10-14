@@ -4,7 +4,7 @@
    jamais aller voir si une plus recente existe. Le seul evenement qui purge
    l'ancienne copie, c'est un CHANGEMENT DE NOM DU CACHE — donc un changement
    de version. Tant que ce numero ne bouge pas, aucune mise a jour n'arrive. */
-const VERSION = '1.3.22';
+const VERSION = '1.3.23';
 const CACHE = '7eme-compagnie-v' + VERSION;
 const ASSETS = ['./', './index.html', './manifest.webmanifest',
                 './icon-192.png', './icon-512.png', './icon-maskable.png'];
@@ -43,7 +43,10 @@ self.addEventListener('fetch', e => {
       caches.match(req, { ignoreSearch: true }).then(hit => {
         const frais = fetch(new Request(req.url, { cache: 'reload' }))
           .then(res => {
-            if (res && res.ok) caches.open(CACHE).then(c => c.put(req, res.clone()));
+            /* Rangee SANS le ?… : chaque partage (?title=…&text=…) ou ?invite
+               creait sinon une copie de plus de la page dans le cache. */
+            const cle = req.url.split(/[?#]/)[0];
+            if (res && res.ok) { const copie = res.clone(); caches.open(CACHE).then(c => c.put(cle, copie)); }
             return res;
           })
           .catch(() => null);
